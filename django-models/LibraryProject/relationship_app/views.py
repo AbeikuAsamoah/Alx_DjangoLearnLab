@@ -3,7 +3,6 @@ from .models import Library, Book
 from django.views.generic.detail import DetailView
 from django.contrib.auth.forms import UserCreationForm
 from django.urls import reverse_lazy
-from django.views.generic import CreateView
 from django.contrib.auth import login
 
 # Create your views here.
@@ -25,8 +24,13 @@ class LibraryDetailView(DetailView):
         context['books']=self.object.books.all()
 
         return context
-
-class SignUpView(CreateView):
-    form_class = UserCreationForm
-    success_url = reverse_lazy('login')
-    template_name = 'relationship_app/register.html'
+def register(request):
+    if request.method == 'POST':
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            login(request, user)  # Log the user in immediately
+            return redirect('home')  # or any page
+    else:
+        form = UserCreationForm()
+    return render(request, 'relationship_app/register.html', {'form': form})
