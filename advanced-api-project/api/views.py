@@ -24,7 +24,7 @@ class CreateView(generics.CreateAPIView):
     serializer_class = BookSerializer
     permission_classes = [IsAuthenticated]
 
-class UpdateBook(generics.UpdateAPIView):
+class UpdateView(generics.UpdateAPIView):
     """Update an existing book"""
     gueryset = Book.objects.all()
     serializer_class = BookSerializer
