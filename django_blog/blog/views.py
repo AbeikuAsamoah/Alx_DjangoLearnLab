@@ -4,6 +4,8 @@ from django.urls import reverse_lazy
 from django.views.generic import CreateView
 from .forms import CustomUserCreationForm
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.views import View
+from django.shortcuts import render
 
 # Create your views here.
 
@@ -15,9 +17,13 @@ class UserLogoutView(LogoutView):
 
 class RegisterView(CreateView):
     form_class = CustomUserCreationForm
-    template_name = 'register.html'
+    template_name = 'blog/register.html'
     success_url = reverse_lazy('login')
 
 class ProfileView(LoginRequiredMixin, TemplateView):
     template_name = 'blog/profile.html'
     login_urls = 'login'
+
+class HomeView(View):
+    def get(self, request):
+        return render(request, 'blog/home.html')
