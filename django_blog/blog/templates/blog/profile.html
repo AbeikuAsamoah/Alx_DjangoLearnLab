@@ -1,0 +1,14 @@
+{% extends "blog/base.html" %}
+
+{% block content %}
+
+<h2>User Profile</h2>
+
+<p><strong>Username:</strong> {{ user.username }}</p>
+<p><strong>Email:</strong> {{ user.email }}</p>
+<p><strong>Phone:</strong> {{ user.phone_number }}</p>
+<p><strong>Role:</strong> {{ user.role }}</p>
+
+<a href="{% url 'logout' %}">Logout</a>
+
+{% endblock %}
