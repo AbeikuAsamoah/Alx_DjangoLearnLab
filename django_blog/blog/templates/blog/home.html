@@ -1,0 +1,16 @@
+{% extends 'blog/base.html' %}
+
+{% block title %}Home - Django Blog{% endblock %}
+
+{% block content %}
+<div class="home-container">
+    <h1>Welcome to Django Blog!</h1>
+    <p>This is the home page of your blog application. Explore posts, register, or log in to interact!</p>
+
+    <div class="home-actions">
+        <a href="{% url 'posts' %}" class="btn">View Blog Posts</a>
+        <a href="{% url 'register' %}" class="btn">Register</a>
+        <a href="{% url 'login' %}" class="btn">Login</a>
+    </div>
+</div>
+{% endblock %}
