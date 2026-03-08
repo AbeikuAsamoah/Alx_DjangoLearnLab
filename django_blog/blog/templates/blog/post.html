@@ -1,0 +1,30 @@
+{% extends 'blog/base.html' %}
+
+{% block title %}Blog Posts{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1>Blog Posts</h1>
+
+    {% if posts %}
+        <ul class="post-list">
+            {% for post in posts %}
+                <li class="post-item">
+                    <h2>{{ post.title }}</h2>
+                    <p class="post-date">{{ post.created_at|date:"F d, Y" }}</p>
+                    <p class="post-excerpt">{{ post.content|truncatewords:30 }}</p>
+                    <a href="{% url 'post_detail' post.pk %}">Read more</a>
+                </li>
+            {% endfor %}
+        </ul>
+
+        {% if is_paginated %}
+            <div class="pagination">
+                {% if page_obj.has_previous %}
+                    <a href="?page={{ page_obj.previous_page_number }}">Previous</a>
+                {% endif %}
+
+                <span>Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
+
+                {% if page_obj.has_next %}
+                    <a href="?
