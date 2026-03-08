@@ -11,7 +11,7 @@
             {% for post in posts %}
                 <li class="post-item">
                     <h2>{{ post.title }}</h2>
-                    <p class="post-date">{{ post.created_at|date:"F d, Y" }}</p>
+                    <p class="post-date">{{ post.published_date|date:"F d, Y" }}</p>
                     <p class="post-excerpt">{{ post.content|truncatewords:30 }}</p>
                     <a href="{% url 'post_detail' post.pk %}">Read more</a>
                 </li>
@@ -27,4 +27,15 @@
                 <span>Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
 
                 {% if page_obj.has_next %}
-                    <a href="?
+                    <a href="?page={{ page_obj.next_page_number }}">Next</a>
+                {% endif %}
+
+            </div>
+        {% endif %}
+
+    {% else %}
+        <p>No posts available.</p>
+    {% endif %}
+
+</div>
+{% endblock %}
