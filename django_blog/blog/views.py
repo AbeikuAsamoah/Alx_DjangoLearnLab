@@ -2,10 +2,10 @@ from django.contrib.auth.views import LoginView, LogoutView
 from django.urls import reverse_lazy
 from django.views.generic import CreateView, ListView, TemplateView, DetailView, UpdateView, DeleteView
 from .forms import CustomUserCreationForm, PostForm
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import UserPassesTestMixin, LoginRequiredMixin
 from django.shortcuts import render, redirect
 from .models import Post
-
+from django.contrib.auth.decorators import login_required
 
 # Create your views here.
 
@@ -27,11 +27,14 @@ class ProfileView(LoginRequiredMixin, TemplateView):
 class HomeView(TemplateView):
     template_name = 'blog/home.html'
 
+@login_required
 def create_post(request):
     if request.method == "POST": 
         form = PostForm(request.POST)
         if form.is_valid():
-            form.save()  
+            post = form.save(commit=False)
+            post.author = request.user
+            post.save()  
             return redirect('posts')
     else:
         form = PostForm()
@@ -47,16 +50,17 @@ class PostListView(ListView):
 class PostDetailView(DetailView):
     model = Post
     template_name = 'blog/post_detail.html'
-    context_object_name = 'post_detail'
+    context_object_name = 'post'
 
-class PostUpdateView(LoginRequiredMixin, UpdateView):
+class PostUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = Post
     fields = ['title', 'content']
     template_name = 'blog/post_update.html'
     success_url = reverse_lazy('posts')
 
-    def get_queryset(self):
-        return Post.objects.filter(author=self.request.user)
+    def test_func(self):
+        post = self.get_object()
+        return self.request.user == post.author
 
 class PostDeleteView(LoginRequiredMixin, DeleteView):
     model = Post
