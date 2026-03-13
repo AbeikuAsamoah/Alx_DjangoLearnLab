@@ -4,7 +4,7 @@ from django.views.generic import CreateView, ListView, TemplateView, DetailView,
 from .forms import CustomUserCreationForm, PostForm
 from django.contrib.auth.mixins import UserPassesTestMixin, LoginRequiredMixin
 from django.shortcuts import render, redirect
-from .models import Post
+from .models import Post, Comment
 from django.contrib.auth.decorators import login_required
 
 # Create your views here.
@@ -68,5 +68,25 @@ class PostDeleteView(LoginRequiredMixin, DeleteView):
     success_url = reverse_lazy('posts')
 
     def get_queryset(self):
+        return Post.objects.filter(author=self.request.user)
+
+class CommentCreateView(CreateView):
+    model = Comment
+    template_name = 'blog/comment_create.html'
+    
+class CommentUpdateView(LoginRequiredMixin, UserPassesTest, UpdateView):
+    model = Comment
+    fields = 'content'
+    template_name = 'blog/comment_update.html'
+
+    def test_func(self):
+        comment = self.get_object()
+        return self.request.user == comment.author
+
+class CommentDeleteView(LoginRequiredMixin, DeleteView):
+    model = Comment
+    template_name = 'blog/delete_comment.html'
+
+    def def query_set(self):
         return Post.objects.filter(author=self.request.user)
 
