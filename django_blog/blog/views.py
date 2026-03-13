@@ -1,7 +1,7 @@
 from django.contrib.auth.views import LoginView, LogoutView
 from django.urls import reverse_lazy
 from django.views.generic import CreateView, ListView, TemplateView, DetailView, UpdateView, DeleteView
-from .forms import CustomUserCreationForm, PostForm
+from .forms import CustomUserCreationForm, PostForm, CommentForm
 from django.contrib.auth.mixins import UserPassesTestMixin, LoginRequiredMixin
 from django.shortcuts import render, redirect
 from .models import Post, Comment
@@ -72,21 +72,34 @@ class PostDeleteView(LoginRequiredMixin, DeleteView):
 
 class CommentCreateView(CreateView):
     model = Comment
+    form_class = CommentForm
     template_name = 'blog/comment_create.html'
+
+    def form_valid(self, form):
+        form.instance.author = self.requesy.user
+        form.instance.post_id = self.kwargs['pk']
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        return reverse_lazy('post_details', kwargs={'pk': self.object.post.pk})
     
-class CommentUpdateView(LoginRequiredMixin, UserPassesTest, UpdateView):
+class CommentUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = Comment
-    fields = 'content'
+    fields = ['content']
     template_name = 'blog/comment_update.html'
 
     def test_func(self):
         comment = self.get_object()
         return self.request.user == comment.author
 
-class CommentDeleteView(LoginRequiredMixin, DeleteView):
+class CommentDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     model = Comment
     template_name = 'blog/delete_comment.html'
 
-    def def query_set(self):
-        return Post.objects.filter(author=self.request.user)
+    def test_func(self):
+        comment = self.get_object()
+        return self.request.user == comment.author
+
+    def get_success_url(self):
+        return reverse_lazy('post_detail', kwargs={'pk': self.object.post.pk})
 
