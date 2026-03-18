@@ -1,4 +1,4 @@
-#Django Blogging Application
+# Django Blogging Application
 A full-featured blogging platform built with Django. This application allows users to create, read update, and delete blog posts, manage comments, and handle user authentication.
 
 ## Features 
